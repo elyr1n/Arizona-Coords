@@ -31,14 +31,14 @@ def root():
 
 
 @app.post("/static")
-async def check_static(sid: StaticIDSchema):
+def check_static(sid: StaticIDSchema):
     verify_static_id(sid)
 
     return {"status": True, "message": "Доступ разрешён!"}
 
 
 @app.post("/coords")
-async def set_coordinates(sid: StaticIDSchema, coordinates: CoordinatesSchema):
+def set_coordinates(sid: StaticIDSchema, coordinates: CoordinatesSchema):
     verify_static_id(sid)
 
     coords["nickname"] = coordinates.nickname
@@ -56,7 +56,7 @@ async def set_coordinates(sid: StaticIDSchema, coordinates: CoordinatesSchema):
 
 
 @app.get("/coords")
-async def get_coordinates(id: int, server: str):
+def get_coordinates(id: int, server: str):
     sid = StaticIDSchema(id=id, server=server)
     verify_static_id(sid)
 
