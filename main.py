@@ -5,7 +5,7 @@ from sqlalchemy import select
 from storage import coords
 from schemas import StaticIDSchema, CoordinatesSchema, KladSchema
 from middleware import verify_static_id
-from database import async_session_maker, KladModel, setup_database, SessionDep
+from database import KladModel, setup_database, SessionDep
 
 from contextlib import asynccontextmanager
 
@@ -46,13 +46,7 @@ def set_coordinates(sid: StaticIDSchema, coordinates: CoordinatesSchema):
     coords["y"] = coordinates.y
     coords["z"] = coordinates.z
 
-    return {
-        "success": True,
-        "nickname": coords["nickname"],
-        "x": coords["x"],
-        "y": coords["y"],
-        "z": coords["z"],
-    }
+    return {"success": True, **coords}
 
 
 @app.get("/coords")
@@ -60,31 +54,17 @@ def get_coordinates(id: int, server: str):
     sid = StaticIDSchema(id=id, server=server)
     verify_static_id(sid)
 
-    return {
-        "success": True,
-        "nickname": coords["nickname"],
-        "x": coords["x"],
-        "y": coords["y"],
-        "z": coords["z"],
-    }
+    return {"success": True, **coords}
 
 
 @app.post("/klad", status_code=201)
-async def add_klad(sid: StaticIDSchema, klad: KladSchema):
+async def add_klad(sid: StaticIDSchema, klad: KladSchema, session: SessionDep):
     verify_static_id(sid)
 
-    async with async_session_maker() as session:
-        new_klad = KladModel(
-            nickname=klad.nickname,
-            x=klad.x,
-            y=klad.y,
-            z=klad.z,
-            loot=klad.loot,
-            time=klad.time,
-        )
+    new_klad = KladModel(**klad.model_dump())
 
-        session.add(new_klad)
-        await session.commit()
+    session.add(new_klad)
+    await session.commit()
 
     return {"success": True, "message": "Клад добавлен!"}
 
@@ -95,21 +75,6 @@ async def get_klads(id: int, server: str, session: SessionDep):
     verify_static_id(sid)
 
     result = await session.execute(select(KladModel))
-
     klads = result.scalars().all()
 
-    return {
-        "success": True,
-        "klads": [
-            {
-                "id": klad.id,
-                "nickname": klad.nickname,
-                "x": klad.x,
-                "y": klad.y,
-                "z": klad.z,
-                "loot": klad.loot,
-                "time": klad.time,
-            }
-            for klad in klads
-        ],
-    }
+    return {"success": True, "klads": klads}

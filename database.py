@@ -26,7 +26,7 @@ class KladModel(Base):
     __tablename__ = "klad"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    nickname: Mapped[str] = mapped_column(index=True)
+    nickname: Mapped[str]
     x: Mapped[int]
     y: Mapped[int]
     z: Mapped[int]
