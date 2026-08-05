@@ -17,6 +17,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None,
     lifespan=lifespan,
     title="Arizona-Coords",
 )
