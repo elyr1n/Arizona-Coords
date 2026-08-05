@@ -17,9 +17,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    docs_url=None,
-    redoc_url=None,
-    openapi_url=None,
     lifespan=lifespan,
     title="Arizona-Coords",
 )
@@ -69,7 +66,7 @@ def get_coordinates(id: int, server: str):
     }
 
 
-@app.post("/klad")
+@app.post("/klad", status_code=201)
 async def add_klad(sid: StaticIDSchema, klad: KladSchema):
     verify_static_id(sid)
 

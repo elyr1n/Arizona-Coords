@@ -5,8 +5,7 @@ from storage import static_ids
 
 
 def verify_static_id(sid: StaticIDSchema):
-    for value in static_ids:
-        if value["id"] == sid.id and value["server"] == sid.server:
-            return True
+    if (sid.id, sid.server) in static_ids:
+        return True
 
     raise HTTPException(status_code=403, detail="Доступ запрещён!")

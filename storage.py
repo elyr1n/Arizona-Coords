@@ -1,3 +1,3 @@
-static_ids = [{"id": 123123, "server": "Faraway"}]
+static_ids = {(123123, "Faraway")}
 
 coords = {"nickname": "Nick_Name", "x": 0, "y": 0, "z": 0}
